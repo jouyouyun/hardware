@@ -1,0 +1,18 @@
+#+OPTIONS: toc:nil num:nil timestamp:nil
+#+AUTHOR: jouyouyun <jouyouwen717@gmail.com>
+#+TITLE: Hardware Info Library For Linux
+
+Supported the following hardware info:
+
++ [X] cpu
++ [ ] memory
++ [X] dmi
++ [X] disk
++ [ ] graphic
++ [X] network
++ [ ] sound
++ [ ] peripherals
++ [ ] blacklight
++ [ ] bluetooth
++ [ ] camera
++ [ ] battery
