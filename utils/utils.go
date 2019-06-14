@@ -23,3 +23,19 @@ func SHA256Sum(data []byte) string {
 	}
 	return fmt.Sprintf("%x", sha256.Sum256(data))
 }
+
+// ScanDir return needed sub directory
+func ScanDir(dir string, filter func(string) bool) ([]string, error) {
+	finfos, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	var list []string
+	for _, finfo := range finfos {
+		if filter(finfo.Name()) {
+			continue
+		}
+		list = append(list, finfo.Name())
+	}
+	return list, nil
+}

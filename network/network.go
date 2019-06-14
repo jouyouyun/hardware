@@ -6,7 +6,6 @@ package network
 import "C"
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"unsafe"
@@ -17,60 +16,42 @@ import (
 const (
 	netSysfsDir   = "/sys/class/net"
 	netVirtualDir = "/sys/devices/virtual/net"
-
-	SlotTypePCI = "pci"
-	SlotTypeUSB = "usb"
 )
 
 // Network store network info
 type Network struct {
-	Name    string
-	Vendor  string
-	Product string
+	utils.CardInfo
+
 	Address string
 	IP      string
-
-	Slot string
 }
 
 // NetworkList network list
 type NetworkList []*Network
 
+// GetNetworkList return network card list
+func GetNetworkList() (NetworkList, error) {
+	var netList NetworkList
+	ifaceList, _ := utils.ScanDir(netSysfsDir, filterIface)
+	for _, iface := range ifaceList {
+		net, err := newNetwork(netSysfsDir, iface)
+		if err != nil {
+			return nil, err
+		}
+		netList = append(netList, net)
+	}
+	return netList, nil
+}
+
 func newNetwork(dir, iface string) (*Network, error) {
-	uevent := filepath.Join(dir, iface, "device", "uevent")
-	uinfo, err := utils.NewUEvent(uevent)
+	card, err := utils.NewCardInfo(dir, iface)
 	if err != nil {
 		return nil, err
 	}
-
-	var net = Network{Name: uinfo.Name}
-	if uinfo.Type == utils.UEventTypePCI {
-		pci := uinfo.Data.(*utils.PCIUEvent)
-		net.Slot = SlotTypePCI
-		net.Vendor = pci.Vendor.Name
-		net.Product = pci.Device.Name
-	} else {
-		usb := uinfo.Data.(*utils.USBUEvent)
-		net.Slot = SlotTypeUSB
-		net.Vendor = usb.Vendor
-		net.Product = usb.Product
-	}
-
+	var net = Network{CardInfo: *card}
 	net.Address, _ = utils.ReadFileContent(filepath.Join(dir, iface, "address"))
 	net.IP = getIfaceIP(iface)
 	return &net, nil
-}
-
-func getIfaceList(dir string, filter func(string) bool) []string {
-	finfos, _ := ioutil.ReadDir(dir)
-	var ifaceList []string
-	for _, finfo := range finfos {
-		if filter(finfo.Name()) {
-			continue
-		}
-		ifaceList = append(ifaceList, finfo.Name())
-	}
-	return ifaceList
 }
 
 func getIfaceIP(iface string) string {

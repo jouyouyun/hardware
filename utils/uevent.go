@@ -17,6 +17,13 @@ const (
 	UEventTypeUSB
 )
 
+const (
+	// SlotTypePCI pci type slot
+	SlotTypePCI = "pci"
+	// SlotTypeUSB usb type slot
+	SlotTypeUSB = "usb"
+)
+
 // IDInfo store device vendor or device info
 type IDInfo struct {
 	ID   string
