@@ -79,14 +79,18 @@ func NewUEvent(filename string) (*UEvent, error) {
 		info.Type = UEventTypePCI
 		var pci *PCIUEvent
 		pci, err = newPCIUEvent(pairs)
-		info.Name = pci.name
-		info.Data = pci
+		if err == nil {
+			info.Name = pci.name
+			info.Data = pci
+		}
 	} else {
 		var usb *USBUEvent
 		info.Type = UEventTypeUSB
 		usb, err = newUSBUEvent(pairs)
-		info.Name = usb.name
-		info.Data = usb
+		if err == nil {
+			info.Name = usb.name
+			info.Data = usb
+		}
 	}
 	if err != nil {
 		return nil, err
@@ -131,8 +135,8 @@ func newUSBUEvent(pairs map[string]string) (*USBUEvent, error) {
 	if len(items) == 4 {
 		idx = 1
 	}
-	info.Vendor = fmt.Sprintf("0%4s", items[idx])
-	info.Product = fmt.Sprintf("0%4s", items[idx+1])
+	info.Vendor = fmt.Sprintf("%04s", items[idx])
+	info.Product = fmt.Sprintf("%04s", items[idx+1])
 
 	output, err := getCommandOutput(fmt.Sprintf("lsusb -d %s:%s",
 		info.Vendor, info.Product))

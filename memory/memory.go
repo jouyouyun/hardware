@@ -23,12 +23,19 @@ const (
 	memFilename = "/proc/meminfo"
 )
 
+var (
+	_memList MemoryList
+)
+
 func GetMemoryList() (MemoryList, error) {
-	mem, err := getMemory(memFilename)
-	if err != nil {
-		return nil, err
+	if len(_memList) == 0 {
+		mem, err := getMemory(memFilename)
+		if err != nil {
+			return nil, err
+		}
+		_memList = MemoryList{mem}
 	}
-	return MemoryList{mem}, nil
+	return _memList, nil
 }
 
 func getMemory(filename string) (*Memory, error) {

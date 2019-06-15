@@ -9,6 +9,7 @@ import (
 	"github.com/jouyouyun/hardware/utils"
 )
 
+// DMI store bios, board, product info
 type DMI struct {
 	BiosVendor     string `json:"bios_vendor"`
 	BiosVersion    string `json:"bios_version"`
@@ -28,8 +29,20 @@ const (
 	dmiDirPrefix = "/sys/class/dmi/id"
 )
 
+var (
+	_dmi *DMI
+)
+
+// GetDMI return bios, board, product info
 func GetDMI() (*DMI, error) {
-	return doGetDMI(dmiDirPrefix)
+	if _dmi == nil {
+		dmi, err := doGetDMI(dmiDirPrefix)
+		if err != nil {
+			return nil, err
+		}
+		_dmi = dmi
+	}
+	return _dmi, nil
 }
 
 func doGetDMI(dir string) (*DMI, error) {

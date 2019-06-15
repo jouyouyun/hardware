@@ -18,6 +18,10 @@ const (
 	cpuFilename = "/proc/cpuinfo"
 )
 
+var (
+	_cpu *CPU
+)
+
 // CPU store cpu info
 type CPU struct {
 	Name       string
@@ -26,20 +30,28 @@ type CPU struct {
 
 // NewCPU return cpu name and processor number
 func NewCPU() (*CPU, error) {
+	if _cpu != nil {
+		return _cpu, nil
+	}
+
 	cpu, err := newCPU(cpuFilename)
 	if err == nil {
+		_cpu = cpu
 		return cpu, nil
 	}
 	cpu, err = newCPUForSW(cpuFilename)
 	if err == nil {
+		_cpu = cpu
 		return cpu, nil
 	}
 	cpu, err = newCPUForLoonson(cpuFilename)
 	if err == nil {
+		_cpu = cpu
 		return cpu, nil
 	}
 	cpu, err = newCPUForARM(cpuFilename)
 	if err == nil {
+		_cpu = cpu
 		return cpu, nil
 	}
 	return nil, err

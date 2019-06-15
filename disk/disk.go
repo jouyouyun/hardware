@@ -3,7 +3,6 @@ package disk
 import (
 	"encoding/json"
 	"os/exec"
-	"strconv"
 	"strings"
 
 	"github.com/jouyouyun/hardware/utils"
@@ -32,11 +31,12 @@ type lsblkDevice struct {
 	Name       string `json:"name"`
 	Serial     string `json:"serial"`
 	Type       string `json:"type"`
-	Size       string `json:"size"`
 	Vendor     string `json:"vendor"`
 	Model      string `json:"model"`
 	UUID       string `json:"uuid"`
 	MountPoint string `json:"mountpoint"`
+
+	Size int64 `json:"size"`
 
 	Children lsblkDeviceList `json:"children"`
 }
@@ -52,6 +52,15 @@ func GetDiskList() (DiskList, error) {
 		return nil, err
 	}
 	return newDiskListFromOutput(out)
+}
+
+func (list DiskList) GetRoot() *Disk {
+	for _, d := range list {
+		if d.RootMounted {
+			return d
+		}
+	}
+	return nil
 }
 
 func newDiskListFromOutput(out []byte) (DiskList, error) {
@@ -73,10 +82,10 @@ func newDiskFromDevice(dev *lsblkDevice) *Disk {
 		Model:       dev.Model,
 		Serial:      dev.Serial,
 		Vendor:      dev.Vendor,
+		Size:        dev.Size,
 		RootMounted: dev.RootMounted(),
 	}
 
-	info.Size, _ = strconv.ParseInt(dev.Size, 10, 64)
 	if len(info.Serial) == 0 {
 		// using children uuid list's sha256 as serial
 		info.Serial = genSerialByUUIDList(dev.GetUUIDList())
