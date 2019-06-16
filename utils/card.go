@@ -25,8 +25,8 @@ func NewCardInfo(dir, name string) (*CardInfo, error) {
 	switch uinfo.Type {
 	case UEventTypePCI:
 		pci := uinfo.Data.(*PCIUEvent)
-		card.Vendor = pci.Vendor.Name
-		card.Product = pci.Device.Name
+		card.Vendor = pci.Vendor.ID
+		card.Product = pci.Device.ID
 		card.Slot = SlotTypePCI
 	case UEventTypeUSB:
 		usb := uinfo.Data.(*USBUEvent)
