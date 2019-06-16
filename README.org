@@ -4,15 +4,17 @@
 
 Supported the following hardware info:
 
-+ [X] cpu
++ [x] cpu
 + [ ] memory
-+ [X] dmi
-+ [X] disk
-+ [ ] graphic
-+ [X] network
-+ [ ] sound
-+ [ ] peripherals
-+ [ ] blacklight
-+ [ ] bluetooth
-+ [ ] camera
-+ [ ] battery
++ [x] dmi
++ [x] disk
++ [x] graphic
++ [x] network
++ [x] sound
++ [x] peripherals
++ [x] backlight
++ [x] bluetooth
++ [x] camera
++ [x] battery
+
+Contains every device name, vendor, product etc.
