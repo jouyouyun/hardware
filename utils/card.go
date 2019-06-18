@@ -43,11 +43,6 @@ func FilterCardName(name string) bool {
 	return filterName(name, "card")
 }
 
-// FilterBatteryName filter battery device name
-func FilterBatteryName(name string) bool {
-	return filterName(name, "BAT")
-}
-
 // FilterBluetoothName filter bluetooth device name
 func FilterBluetoothName(name string) bool {
 	return filterName(name, "hci")

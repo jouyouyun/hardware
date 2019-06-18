@@ -30,12 +30,17 @@ type BatteryList []*Battery
 
 // GetBatteryList return battery list
 func GetBatteryList() (BatteryList, error) {
-	list, err := utils.ScanDir(batterySysfsDir, utils.FilterBatteryName)
+	list, err := utils.ScanDir(batterySysfsDir, func(string) bool {
+		return false
+	})
 	if err != nil {
 		return nil, err
 	}
 	var batList BatteryList
 	for _, name := range list {
+		if !isBattery(batterySysfsDir, name) {
+			continue
+		}
 		bat, err := newBattery(batterySysfsDir, name)
 		if err != nil {
 			return nil, err
@@ -64,6 +69,15 @@ func newBattery(dir, name string) (*Battery, error) {
 	bat.CapacityNow, _ = strconv.ParseInt(set["POWER_SUPPLY_CHARGE_NOW"],
 		10, 64)
 	return &bat, nil
+}
+
+func isBattery(dir, name string) bool {
+	filename := filepath.Join(dir, name, "type")
+	ty, err := utils.ReadFileContent(filename)
+	if err != nil {
+		return false
+	}
+	return ty == "Battery"
 }
 
 func parseFile(filename string) (map[string]string, error) {
