@@ -3,6 +3,7 @@ package disk
 import (
 	"encoding/json"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/jouyouyun/hardware/utils"
@@ -36,7 +37,7 @@ type lsblkDevice struct {
 	UUID       string `json:"uuid"`
 	MountPoint string `json:"mountpoint"`
 
-	Size int64 `json:"size"`
+	Size interface{} `json:"size"`
 
 	Children lsblkDeviceList `json:"children"`
 }
@@ -82,8 +83,13 @@ func newDiskFromDevice(dev *lsblkDevice) *Disk {
 		Model:       dev.Model,
 		Serial:      dev.Serial,
 		Vendor:      dev.Vendor,
-		Size:        dev.Size,
 		RootMounted: dev.RootMounted(),
+	}
+
+	if v, ok := dev.Size.(string); ok {
+		info.Size, _ = strconv.ParseInt(v, 10, 64)
+	} else if v, ok := dev.Size.(float64); ok {
+		info.Size = int64(v)
 	}
 
 	if len(info.Serial) == 0 {
