@@ -26,6 +26,8 @@ func GenMachineID() (string, error) {
 			_mid = mid
 			return mid, nil
 		}
+	} else if dmi == nil {
+		dmi = &hdmi.DMI{}
 	}
 
 	// if dmi product uuid null, generate machine id with root disk serial
