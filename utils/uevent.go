@@ -130,6 +130,10 @@ func newUSBUEvent(pairs map[string]string) (*USBUEvent, error) {
 	}
 	product := pairs["PRODUCT"]
 	items := strings.Split(product, "/")
+	if len(items) < 3 {
+		return nil, fmt.Errorf("invalid uevent format, items < 3")
+	}
+
 	// compatible usb mouse
 	idx := 0
 	if len(items) == 4 {
