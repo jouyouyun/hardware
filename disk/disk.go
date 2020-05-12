@@ -109,9 +109,16 @@ func genSerialByUUIDList(list []string) string {
 }
 
 func (dev *lsblkDevice) RootMounted() bool {
-	for _, child := range dev.Children {
+	return FoundMountPoint(dev.Children)
+}
+
+func FoundMountPoint(childrens lsblkDeviceList) bool {
+	for _, child := range childrens {
 		if child.MountPoint == "/" {
 			return true
+		}
+		if len(child.Children) != 0 {
+			return FoundMountPoint(child.Children)
 		}
 	}
 	return false
