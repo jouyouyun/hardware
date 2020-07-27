@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	_mid string
+	_mid            string
+	IncludeDiskInfo bool
 )
 
 // GenMachineID generate this machine's id
@@ -20,7 +21,7 @@ func GenMachineID() (string, error) {
 	}
 
 	dmi, err := hdmi.GetDMI()
-	if err == nil && len(dmi.ProductUUID) != 0 {
+	if !IncludeDiskInfo && err == nil && len(dmi.ProductUUID) != 0 {
 		mid, err := genMachineIDWithDMI(*dmi)
 		if err == nil {
 			_mid = mid
@@ -30,7 +31,7 @@ func GenMachineID() (string, error) {
 		dmi = &hdmi.DMI{}
 	}
 
-	// if dmi product uuid null, generate machine id with root disk serial
+	// if dmi product uuid null or IncludeDiskInfo is true, generate machine id with root disk serial
 	disks, err := hdisk.GetDiskList()
 	if err != nil {
 		return "", err
