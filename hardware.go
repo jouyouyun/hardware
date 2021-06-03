@@ -21,7 +21,7 @@ func GenMachineID() (string, error) {
 	}
 
 	dmi, err := hdmi.GetDMI()
-	if !IncludeDiskInfo && err == nil && len(dmi.ProductUUID) != 0 {
+	if !IncludeDiskInfo && err == nil && dmi.IsValid() {
 		mid, err := genMachineIDWithDMI(*dmi)
 		if err == nil {
 			_mid = mid

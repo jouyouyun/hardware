@@ -6,6 +6,8 @@ import (
 
 	"encoding/json"
 
+	"strings"
+
 	"github.com/jouyouyun/hardware/utils"
 )
 
@@ -32,6 +34,23 @@ const (
 var (
 	_dmi *DMI
 )
+
+func (dmi *DMI) IsValid() bool {
+	var keys = []string{
+		dmi.ProductUUID,
+		dmi.ProductSerial,
+		dmi.ProductFamily,
+		dmi.ProductName,
+	}
+
+	for _, key := range keys {
+		if !checkValid(key) {
+			return false
+		}
+	}
+
+	return true
+}
 
 // GetDMI return bios, board, product info
 func GetDMI() (*DMI, error) {
@@ -84,4 +103,17 @@ func doGetDMI(dir string) (*DMI, error) {
 		return nil, err
 	}
 	return &dmi, nil
+}
+
+func checkValid(key string) bool {
+	if len(key) == 0 {
+		return false
+	}
+
+	tmp := strings.ToLower(key)
+	if tmp == "unknown" || tmp == "none" || tmp == "null" {
+		return false
+	}
+
+	return true
 }
