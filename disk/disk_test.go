@@ -78,3 +78,29 @@ func Test_GetRootMountInfo_2(t *testing.T) {
 	}
 
 }
+
+func Test_GetRootMountInfo_3(t *testing.T) {
+	var str = `{
+		"blockdevices": [
+		   {"name":"zzzz", "serial":"10c34x45c45155d024f55sd4a4ba0001", "type":"rom", "size":2226057216, "vendor":"NECVMWar", "model":"VMware_Virtual_IDE_CDROM_Drive", "mountpoint":"/", "uuid":"2020-01-14-08-15-26-00"}
+		]
+	 }`
+	info := []byte(str)
+	disk, err := newDiskListFromOutput(info)
+	if err != nil {
+		t.Error("json格式不对")
+	}
+
+	for _, v := range disk {
+		if v.RootMounted == true {
+			println("3-Name:", v.Name)
+			println("3-Size:", v.Size)
+			println("3-Serial:", v.Serial)
+			println("3-RootMounted:", v.RootMounted)
+		} else {
+			t.FailNow()
+		}
+
+	}
+
+}
