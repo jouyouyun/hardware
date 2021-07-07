@@ -88,15 +88,15 @@ func Test_GetRootMountInfo_3(t *testing.T) {
 	info := []byte(str)
 	disk, err := newDiskListFromOutput(info)
 	if err != nil {
-		t.Error("json格式不对")
+		t.Error("json format error")
 	}
 
 	for _, v := range disk {
 		if v.RootMounted == true {
-			println("3-Name:", v.Name)
-			println("3-Size:", v.Size)
-			println("3-Serial:", v.Serial)
-			println("3-RootMounted:", v.RootMounted)
+			println("Name:", v.Name)
+			println("Size:", v.Size)
+			println("Serial:", v.Serial)
+			println("RootMounted:", v.RootMounted)
 		} else {
 			t.FailNow()
 		}
