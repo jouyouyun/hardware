@@ -26,15 +26,29 @@ type Network struct {
 	IP      string
 }
 
+var (
+	netDir     string
+	virtualDir string
+)
+
+func SetDir(dir string, vDir string) {
+	netDir = dir
+	virtualDir = vDir
+}
+
 // NetworkList network list
 type NetworkList []*Network
 
 // GetNetworkList return network card list
 func GetNetworkList() (NetworkList, error) {
 	var netList NetworkList
-	ifaceList, _ := utils.ScanDir(netSysfsDir, filterIface)
+	scanSysDir := netDir
+	if netDir == "" {
+		scanSysDir = netSysfsDir
+	}
+	ifaceList, _ := utils.ScanDir(scanSysDir, filterIface)
 	for _, iface := range ifaceList {
-		net, err := newNetwork(netSysfsDir, iface)
+		net, err := newNetwork(scanSysDir, iface)
 		if err != nil {
 			return nil, err
 		}
@@ -66,7 +80,11 @@ func getIfaceIP(iface string) string {
 }
 
 func filterIface(iface string) bool {
-	return isVirtualIface(iface, netVirtualDir)
+	scanVDir := virtualDir
+	if virtualDir == "" {
+		scanVDir = netVirtualDir
+	}
+	return isVirtualIface(iface, scanVDir)
 }
 
 func isVirtualIface(iface, dir string) bool {

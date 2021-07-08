@@ -109,6 +109,9 @@ func genSerialByUUIDList(list []string) string {
 }
 
 func (dev *lsblkDevice) RootMounted() bool {
+	if dev.MountPoint == "/" {
+		return true
+	}
 	return FoundMountPoint(dev.Children)
 }
 
