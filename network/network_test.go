@@ -26,7 +26,7 @@ func Test_GetNetworkList(t *testing.T) {
 }
 
 func Test_GetNetworkListByCustomDir(t *testing.T) {
-	SetDir("./netData", "/sys/devices/virtual/net")
+	SetDir("./testdata", "/sys/devices/virtual/net")
 	nets, err := GetNetworkList()
 	if err != nil {
 		t.Fatal(err.Error())
