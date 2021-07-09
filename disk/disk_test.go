@@ -1,7 +1,6 @@
 package disk
 
 import (
-	"strings"
 	"testing"
 )
 
@@ -26,45 +25,42 @@ func Test_GetRootMountInfo(t *testing.T) {
 	if err != nil {
 		t.Error("json format error")
 	}
-	for index, v := range disk {
-		if index == 0 {
-			if !strings.EqualFold(v.Name, "sdb") {
-				t.Error("test disk name failed")
-			}
-			if !strings.EqualFold(v.Model, "VMware_Virtual_S") {
-				t.Error("test disk model failed")
-			}
-			if !strings.EqualFold(v.Serial, "68f9ds8fd7f8d52c8a2dj78fg79ss9c") {
-				t.Error("test disk serial failed")
-			}
-			if !strings.EqualFold(v.Vendor, "VMware, ") {
-				t.Error("test disk vendor failed")
-			}
-			if v.Size != 15548554655 {
-				t.Error("test disk size failed")
-			}
-			if !v.RootMounted {
-				t.Error("test disk root mounted failed")
-			}
-		} else {
-			if !strings.EqualFold(v.Name, "zzzz") {
-				t.Error("test disk name failed")
-			}
-			if !strings.EqualFold(v.Model, "VMware_Virtual_IDE_CDROM_Drive") {
-				t.Error("test disk model failed")
-			}
-			if !strings.EqualFold(v.Serial, "10c34x45c45155d024f55sd4a4ba0001") {
-				t.Error("test disk serial failed")
-			}
-			if !strings.EqualFold(v.Vendor, "NECVMWar") {
-				t.Error("test disk vendor failed")
-			}
-			if v.Size != 2226057216 {
-				t.Error("test disk size failed")
-			}
-			if v.RootMounted {
-				t.Error("test disk root mounted failed")
-			}
+	var infos = DiskList{
+		&Disk{
+			Name:        "sdb",
+			Model:       "VMware_Virtual_S",
+			Serial:      "68f9ds8fd7f8d52c8a2dj78fg79ss9c",
+			Vendor:      "VMware, ",
+			Size:        15548554655,
+			RootMounted: true,
+		},
+		&Disk{
+			Name:        "zzzz",
+			Model:       "VMware_Virtual_IDE_CDROM_Drive",
+			Serial:      "10c34x45c45155d024f55sd4a4ba0001",
+			Vendor:      "NECVMWar",
+			Size:        2226057216,
+			RootMounted: false,
+		},
+	}
+	for i, v := range disk {
+		if v.Name != infos[i].Name {
+			t.Errorf("Disk name test failed: excepted %s, but got %s", infos[i].Name, v.Name)
+		}
+		if v.Model != infos[i].Model {
+			t.Errorf("Disk model test failed: excepted %s, but got %s", infos[i].Model, v.Model)
+		}
+		if v.Vendor != infos[i].Vendor {
+			t.Errorf("Disk vendor test failed: excepted %s, but got %s", infos[i].Vendor, v.Vendor)
+		}
+		if v.Serial != infos[i].Serial {
+			t.Errorf("Disk serial test failed: excepted %s, but got %s", infos[i].Serial, v.Serial)
+		}
+		if v.Size != infos[i].Size {
+			t.Errorf("Disk size test failed: excepted %v, but got %v", infos[i].Size, v.Size)
+		}
+		if v.RootMounted != infos[i].RootMounted {
+			t.Errorf("Disk root mounted test failed: excepted %v, but got %v", infos[i].RootMounted, v.RootMounted)
 		}
 	}
 }
