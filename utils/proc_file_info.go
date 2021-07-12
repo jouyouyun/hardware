@@ -31,12 +31,14 @@ func ProcGetByKey(filename, delim string, keySet map[string]string,
 			continue
 		}
 		key := strings.TrimSpace(items[0])
-		_, ok := keySet[key]
+		v, ok := keySet[key]
 		if !ok {
 			continue
 		}
 		keySet[key] = strings.TrimSpace(items[1])
-		count++
+		if len(v) == 0 {
+			count++
+		}
 	}
 	if l != count {
 		return fmt.Errorf("not found all keys")
